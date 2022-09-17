@@ -16,6 +16,8 @@
 #include "TargetComponent.h"
 #include "SkillSystems.h"
 
+#include <Windows.h>
+
 ecs::Entity createKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager)
 {
     const auto entity = manager.createEntity();
@@ -41,15 +43,19 @@ ecs::Entity createOrc(ecs::EntityManager<ComponentCount, SystemCount> & manager)
 }
 
 void printInfo(ecs::EntityManager<ComponentCount, SystemCount> const & manager,
-               const ecs::Entity knightEntity, const ecs::Entity orcEntity)
+    const ecs::Entity knightEntity, const ecs::Entity orcEntity)
 {
     std::cout << "Knight:" << manager.getComponent<Life>(knightEntity).lifePoints << " Defense:"
         << (manager.hasComponent<DefensiveItem>(knightEntity) ? manager.getComponent<DefensiveItem>(knightEntity).defensePoints : 0) << std::endl;
-        std::cout << "Orc:" << manager.getComponent<Life>(orcEntity).lifePoints << std::endl;
+    std::cout << "Orc:" << manager.getComponent<Life>(orcEntity).lifePoints << std::endl;
 }
 
 int main()
 {
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+    GetConsoleScreenBufferInfo(h, &bufferInfo);
+
     std::srand(static_cast<unsigned int>(std::time(nullptr))); // TODO: Better random number generator
 
     constexpr auto nbEntities = static_cast<std::size_t>(10000);
@@ -80,11 +86,17 @@ int main()
     manager.addComponent<Target>(orcEntity, knightEntity);
 
     printInfo(manager, knightEntity, orcEntity);
+    std::cout << "Press enter to start..." << std::endl;
+    std::cin.ignore();
 
-    while(manager.getComponent<Life>(knightEntity).lifePoints > 0 and
+    while (manager.getComponent<Life>(knightEntity).lifePoints > 0 and
         manager.getComponent<Life>(orcEntity).lifePoints > 0)
     {
-        // TODO: Gameplay and print TUI
+        // reset the cursor position to where it was each time
+        SetConsoleCursorPosition(h, bufferInfo.dwCursorPosition);
+        system("cls");
+
+        // TODO: Add remaining time for skills!
 
         // Skills
         chargeSystem->update();
@@ -93,7 +105,26 @@ int main()
         // Remove life points
         fightSystem->update();
 
-        printInfo(manager, knightEntity, orcEntity); 
+        printInfo(manager, knightEntity, orcEntity);
+
+        if (manager.getComponent<Life>(knightEntity).lifePoints > 0 and
+            manager.getComponent<Life>(orcEntity).lifePoints > 0)
+        {
+            std::cout << "Press enter for the next turn..." << std::endl;
+        }
+        else if (manager.getComponent<Life>(knightEntity).lifePoints > 0)
+        {
+            std::cout << "Knight won!" << std::endl;
+        }
+        else if (manager.getComponent<Life>(orcEntity).lifePoints > 0)
+        {
+            std::cout << "Orc won!" << std::endl;
+        }
+        else
+        {
+            std::cout << "It's a draw!" << std::endl; 
+        }
+        std::cin.ignore();
     }
 
 
