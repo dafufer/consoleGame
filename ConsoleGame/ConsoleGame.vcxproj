@@ -91,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,7 +152,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentContainer.cpp" />
     <ClCompile Include="ConsoleGame.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentContainer.h" />
+    <ClInclude Include="Components.h" />
+    <ClInclude Include="DefensiveItems.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityContainer.h" />
+    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="InfoComponent.h" />
+    <ClInclude Include="LifeComponent.h" />
+    <ClInclude Include="PotionItem.h" />
+    <ClInclude Include="Skills.h" />
+    <ClInclude Include="WeaponComponent.h" />
+    <ClInclude Include="System.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
