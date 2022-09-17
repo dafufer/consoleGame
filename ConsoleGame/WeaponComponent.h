@@ -12,22 +12,17 @@
  */
 struct WeaponItem : public ecs::Component<WeaponItem, ComponentType::Weapon>
 {
-    WeaponItem(std::string _name, std::string _description, int _damage, bool _throwable, bool _usesAmmunition)
-    : name(std::move(_name))
-    , description(std::move(_description))
-    , damage(_damage)
+    WeaponItem(int _damage, bool _throwable, bool _usesAmmunition)
+    : damage(_damage)
     , throwable(_throwable)
     , usesAmmunition(_usesAmmunition)
     {
 
     }
 
-    std::string const name;
-    std::string const description;
-
-    int const damage;
-    bool const throwable;
-    bool const usesAmmunition;
+    int damage;
+    bool throwable;
+    bool usesAmmunition;
 };
 
 /**
@@ -35,19 +30,14 @@ struct WeaponItem : public ecs::Component<WeaponItem, ComponentType::Weapon>
  */
 struct Ammunition : public ecs::Component<WeaponItem, ComponentType::Ammunition>
 {
-    Ammunition(std::string _name, std::string _description, int _damage, int _quantity)
-    : name(std::move(_name))
-    , description(std::move(_description))
-    , damage(_damage)
+    Ammunition(int _damage, int _quantity)
+    : damage(_damage)
     , quantity(_quantity)
     {
 
     }
 
-    std::string const name;
-    std::string const description;
-
-    int const damage;
+    int damage;
     int quantity;
 };
 

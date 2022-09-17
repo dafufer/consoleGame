@@ -2,27 +2,23 @@
 
 #include "Component.h"
 #include "Components.h"
-#include  <string>
-
+#include "InfoComponent.h"
 
 /**
  * \brief Represents a defensive item in the game (i.e. a shield, an armor, etc.).
  * Each defensive item has a name, a description, and defense points. Defense points are removed before life points.
  */
-struct DefensiveItem : public ecs::Component<DefensiveItem, ComponentType::Defensive>
+struct DefensiveItem : public ecs::Component<DefensiveItem, ComponentType::Defense>
 {
-    DefensiveItem(std::string _name, std::string _description, int _defensePoints)
-    : name(std::move(_name))
-    , description(std::move(_description))
-    , defensePoints(_defensePoints)
+    DefensiveItem(Info _info, int _defensePoints)
+    : info(std::move(_info)),
+    defensePoints(_defensePoints)
 
     {
 
     }
 
-    std::string const name;
-    std::string const description;
-
+    Info info;
     int defensePoints;
 };
 

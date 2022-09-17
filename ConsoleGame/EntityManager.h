@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <array>
 
 #include "ComponentContainer.h"
 #include "EntityContainer.h"
@@ -61,7 +62,7 @@ namespace ecs
         template<typename T>
         T& getComponent(Entity entity);
         template<typename T>
-        const T& getComponent(Entity entity) const;
+        [[nodiscard]] const T& getComponent(Entity entity) const;
         template<typename ...Ts>
         std::tuple<Ts&...> getComponents(Entity entity);
         template<typename ...Ts>
@@ -99,7 +100,7 @@ namespace ecs
         template<typename T>
         auto getComponentContainer();
         template<typename T>
-        auto getComponentContainer() const;
+        [[nodiscard]] auto getComponentContainer() const;
     };
 
     template<std::size_t ComponentCount, std::size_t SystemCount> template<typename T>

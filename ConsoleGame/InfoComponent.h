@@ -11,6 +11,6 @@ struct Info : public ecs::Component<Info, ComponentType::Info>
 
     }
 
-    std::string const name;
-    std::string const description;
+    std::string name;
+    std::string description;
 };

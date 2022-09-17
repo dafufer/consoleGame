@@ -6,8 +6,12 @@ enum class ComponentType
     Life,
     Weapon,
     Ammunition,
-    Defensive,
+    Defense,
     HealthPotion,
     StrengthPotion,
-    Skill
+    StunSkill,
+    ChargeSkill,
+    StunnedStatus,
+    ChargedStatus,
+    Target
 };

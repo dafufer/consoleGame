@@ -3,10 +3,12 @@
 #include "Entity.h"
 #include <vector>
 #include <bitset>
-#include "EntityManager.h"
 
 namespace ecs
 {
+    template<std::size_t ComponentCount, std::size_t SystemCount>
+    class EntityManager;
+
     /**
      * \brief Each system has a bit set mRequirements which describes the components it requires.
      * Then, it will maintain a set of entities that satisfy these requirements called mManagedEntities.
@@ -22,7 +24,10 @@ namespace ecs
     protected:
         template<typename ...Ts>
         void setRequirements();
+
         [[nodiscard]] const std::vector<Entity>& getManagedEntities() const;
+        [[nodiscard]] bool isEntityManaged(Entity entity) const { return mEntityToManagedEntity.find(entity) != std::end(mEntityToManagedEntity); }
+
         /**
          * \brief Called when an entity is added
          * \param entity Entity's id
@@ -33,8 +38,6 @@ namespace ecs
          * \param entity Entity's id
          */
         virtual void onManagedEntityRemoved([[maybe_unused]] Entity entity) {}
-
-        virtual void update() {}
 
     private:
         friend EntityManager<ComponentCount, SystemCount>;
@@ -102,7 +105,7 @@ namespace ecs
     void System<ComponentCount, SystemCount>::onEntityUpdated(Entity entity, const std::bitset<ComponentCount>& components)
     {
         auto satisfied = (mRequirements & components) == mRequirements;
-        auto managed = mEntityToManagedEntity.find(entity) != std::end(mEntityToManagedEntity);
+        auto managed = isEntityManaged(entity);
         if (satisfied && !managed)
         {
             addEntity(entity);
@@ -116,7 +119,7 @@ namespace ecs
     template<std::size_t ComponentCount, std::size_t SystemCount>
     void System<ComponentCount, SystemCount>::onEntityRemoved(Entity entity)
     {
-        if (mEntityToManagedEntity.find(entity) != std::end(mEntityToManagedEntity))
+        if (isEntityManaged(entity))
         {
             removeEntity(entity);
         }
