@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Components.h"
+#include "ComponentTypes.h"
 #include "Component.h"
 #include "Entity.h"
 

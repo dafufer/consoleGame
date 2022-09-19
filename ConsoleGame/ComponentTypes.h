@@ -9,9 +9,11 @@ enum class ComponentType
     Defense,
     HealthPotion,
     StrengthPotion,
+    SkillSet,
     StunSkill,
     ChargeSkill,
     StunnedStatus,
     ChargedStatus,
-    Target
+    Target,
+    Initiative
 };

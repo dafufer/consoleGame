@@ -19,6 +19,9 @@
     <Filter Include="Header Files\systems">
       <UniqueIdentifier>{8960602e-80b2-48b9-a01a-fecd6eadc1cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\systems">
+      <UniqueIdentifier>{281f8d2e-c9f7-41d9-9ff5-979aa3f78a37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleGame.cpp">
@@ -26,6 +29,12 @@
     </ClCompile>
     <ClCompile Include="ComponentContainer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FightSystem.cpp">
+      <Filter>Source Files\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="SkillSystem.cpp">
+      <Filter>Source Files\systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,9 +59,6 @@
     <ClInclude Include="InfoComponent.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
-    <ClInclude Include="Components.h">
-      <Filter>Header Files\components</Filter>
-    </ClInclude>
     <ClInclude Include="WeaponComponent.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
@@ -62,25 +68,31 @@
     <ClInclude Include="PotionItem.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
-    <ClInclude Include="Skills.h">
-      <Filter>Header Files\components</Filter>
-    </ClInclude>
     <ClInclude Include="LifeComponent.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
     <ClInclude Include="SystemDefs.h">
       <Filter>Header Files\systems</Filter>
     </ClInclude>
-    <ClInclude Include="SkillSystems.h">
-      <Filter>Header Files\systems</Filter>
-    </ClInclude>
     <ClInclude Include="TargetComponent.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
-    <ClInclude Include="Status.h">
+    <ClInclude Include="FightSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTypes.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
-    <ClInclude Include="FightSystem.h">
+    <ClInclude Include="InitiativeComponent.h">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusComponent.h">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillComponents.h">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillSystem.h">
       <Filter>Header Files\systems</Filter>
     </ClInclude>
   </ItemGroup>

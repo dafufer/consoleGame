@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include <vector>
 #include <bitset>
+#include <unordered_map>
 
 namespace ecs
 {
@@ -26,6 +27,7 @@ namespace ecs
         void setRequirements();
 
         [[nodiscard]] const std::vector<Entity>& getManagedEntities() const;
+        std::vector<Entity>& getManagedEntities();
         [[nodiscard]] bool isEntityManaged(Entity entity) const { return mEntityToManagedEntity.find(entity) != std::end(mEntityToManagedEntity); }
 
         /**
@@ -91,6 +93,12 @@ namespace ecs
 
     template<std::size_t ComponentCount, std::size_t SystemCount>
     const std::vector<Entity>&  System<ComponentCount, SystemCount>::getManagedEntities() const
+    {
+        return mManagedEntities;
+    }
+
+    template<std::size_t ComponentCount, std::size_t SystemCount>
+    std::vector<Entity>&  System<ComponentCount, SystemCount>::getManagedEntities()
     {
         return mManagedEntities;
     }

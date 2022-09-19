@@ -155,22 +155,25 @@
   <ItemGroup>
     <ClCompile Include="ComponentContainer.cpp" />
     <ClCompile Include="ConsoleGame.cpp" />
+    <ClCompile Include="FightSystem.cpp" />
+    <ClCompile Include="SkillSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentContainer.h" />
-    <ClInclude Include="Components.h" />
+    <ClInclude Include="ComponentTypes.h" />
     <ClInclude Include="FightSystem.h" />
     <ClInclude Include="DefensiveItems.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityContainer.h" />
     <ClInclude Include="EntityManager.h" />
     <ClInclude Include="InfoComponent.h" />
+    <ClInclude Include="InitiativeComponent.h" />
     <ClInclude Include="LifeComponent.h" />
     <ClInclude Include="PotionItem.h" />
-    <ClInclude Include="Skills.h" />
-    <ClInclude Include="SkillSystems.h" />
-    <ClInclude Include="Status.h" />
+    <ClInclude Include="SkillComponents.h" />
+    <ClInclude Include="SkillSystem.h" />
+    <ClInclude Include="StatusComponent.h" />
     <ClInclude Include="SystemDefs.h" />
     <ClInclude Include="TargetComponent.h" />
     <ClInclude Include="WeaponComponent.h" />

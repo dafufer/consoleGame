@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Component.h"
-#include "Components.h"
+#include "ComponentTypes.h"
 #include  <string>
 
 
