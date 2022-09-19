@@ -25,9 +25,9 @@ private:
     void useDodge(ecs::Entity const entity) const;
     void useDoubleAttack(ecs::Entity const entity) const;
 
-    template <typename Status>
+    template <typename Status, typename... Args>
     void useSkill(ecs::Entity const entity, ComponentType const type,
-        std::string const & successMessage, std::string const & failureMessage);
+        std::string const & successMessage, std::string const & failureMessage, Args&& ... args) const;
 private:
     ecs::EntityManager<ComponentCount, SystemCount>& mEntityManager;
     std::random_device r;
@@ -36,9 +36,9 @@ private:
 };
 
 // TODO: Restrict template to types ?
-template <typename Status>
+template <typename Status, typename... Args>
 void SkillSystem::useSkill(ecs::Entity const entity, ComponentType const type, std::string const& successMessage,
-    std::string const& failureMessage)
+    std::string const& failureMessage, Args&&... args) const
 {
     auto& skill = mEntityManager.getComponent<SkillSet>(entity).skills.at(type);
 
@@ -60,6 +60,6 @@ void SkillSystem::useSkill(ecs::Entity const entity, ComponentType const type, s
 
     // Success!!!
     const auto& target = mEntityManager.getComponent<Target>(entity);
-    mEntityManager.addComponent<Status>(target.entity);
+    mEntityManager.addComponent<Status>(target.entity, std::forward<Args>(args)...);
     std::cout << failureMessage << std::endl;
 }
