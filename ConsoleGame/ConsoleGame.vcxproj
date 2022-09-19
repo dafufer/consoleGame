@@ -155,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="ComponentContainer.cpp" />
     <ClCompile Include="ConsoleGame.cpp" />
+    <ClCompile Include="ConsumableSystem.cpp" />
     <ClCompile Include="FightSystem.cpp" />
     <ClCompile Include="SkillSystem.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentContainer.h" />
     <ClInclude Include="ComponentTypes.h" />
+    <ClInclude Include="ConsumableSystem.h" />
     <ClInclude Include="FightSystem.h" />
     <ClInclude Include="DefensiveItems.h" />
     <ClInclude Include="Entity.h" />
@@ -170,7 +172,7 @@
     <ClInclude Include="InfoComponent.h" />
     <ClInclude Include="InitiativeComponent.h" />
     <ClInclude Include="LifeComponent.h" />
-    <ClInclude Include="PotionItem.h" />
+    <ClInclude Include="ConsumableComponents.h" />
     <ClInclude Include="SkillComponents.h" />
     <ClInclude Include="SkillSystem.h" />
     <ClInclude Include="StatusComponent.h" />

@@ -35,22 +35,3 @@ struct SkillSet final : ecs::Component<SkillSet, ComponentType::SkillSet>
 
     std::unordered_map<ComponentType, Skill> skills;
 };
-
-struct StunSkill final : public Skill, ecs::Component<StunSkill, ComponentType::StunSkill>
-{
-    StunSkill()
-        : Skill(Info("Stun", ""), 20, 5)
-    {
-
-    }
-};
-
-
-struct ChargeSkill final : public Skill, ecs::Component<StunSkill, ComponentType::ChargeSkill>
-{
-    ChargeSkill()
-        :Skill(Info("Charge", ""), 60, 3)
-    {
-
-    }
-};

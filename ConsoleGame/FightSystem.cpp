@@ -28,49 +28,97 @@ void FightSystem::update() const
 {
     for (const auto& entity : getManagedEntities())
     {
-        const auto target = mEntityManager.getComponent<Target>(entity);
-        auto & life = mEntityManager.getComponent<Life>(target.entity);
-
-        if (life.lifePoints < 0)
+        if (const auto & life = mEntityManager.getComponent<Life>(entity); life.lifePoints < 0)
         {
             // Entity is dead
             continue;
         }
 
-        // Entity is stunned, can't do anything
-        if (mEntityManager.hasComponent<Stunned>(entity))
+        // Deal with consumable items. They have priority over skills
+        int damageFactor = 1;
+        if (not consumableItems(entity, damageFactor))
         {
-            mEntityManager.removeComponent<Stunned>(entity);
             continue;
         }
 
-        auto weapon = mEntityManager.getComponent<WeaponItem>(entity);
-
-        // Target is being charged
-        if (mEntityManager.hasComponent<Charged>(target.entity))
+        // Deal with skills
+        if (not skills(entity, damageFactor))
         {
-            weapon.damage *= 2;
-        }
-
-        if (mEntityManager.hasComponent<Charged>(entity))
-        {
-            mEntityManager.removeComponent<Charged>(entity);
+            continue;
         }
 
         // Remove defense points first
+        auto const & weapon = mEntityManager.getComponent<WeaponItem>(entity);
+        const auto & target = mEntityManager.getComponent<Target>(entity);
+        int damage = weapon.damage * damageFactor;
         if (mEntityManager.hasComponent<DefensiveItem>(target.entity))
         {
             auto& defense = mEntityManager.getComponent<DefensiveItem>(target.entity);
             defense.defensePoints -= weapon.damage;
-            weapon.damage = 0;
+            damage = 0;
             if (defense.defensePoints < 0)
             {
-                weapon.damage = std::abs(defense.defensePoints);
+                damage = std::abs(defense.defensePoints);
                 mEntityManager.removeComponent<DefensiveItem>(target.entity);
             }
         }
 
         // Remove life points
-        life.lifePoints -= weapon.damage;
+        auto & targetLife = mEntityManager.getComponent<Life>(target.entity);
+        targetLife.lifePoints -= damage;
     }
+}
+
+bool FightSystem::consumableItems(const ecs::Entity entity, int & damageFactor) const
+{
+    // Entity is healed
+    if (mEntityManager.hasComponent<Healed>(entity))
+    {
+        auto & life = mEntityManager.getComponent<Life>(entity);
+        life.lifePoints += mEntityManager.getComponent<Healed>(entity).lifePoints;
+        mEntityManager.removeComponent<Healed>(entity);
+    }
+
+    if (mEntityManager.hasComponent<Strong>(entity))
+    {
+        damageFactor *= mEntityManager.getComponent<Strong>(entity).damageFactor;
+        mEntityManager.removeComponent<Strong>(entity);
+    }
+
+    return true;
+}
+
+bool FightSystem::skills(const ecs::Entity entity, int & damageFactor) const
+{
+    // Entity is stunned, can't do anything
+    if (mEntityManager.hasComponent<Stunned>(entity))
+    {
+        mEntityManager.removeComponent<Stunned>(entity);
+        return false;
+    }
+
+    // Entity has been dodged, attack does nothing
+    if (mEntityManager.hasComponent<Dodged>(entity))
+    {
+        mEntityManager.removeComponent<Dodged>(entity);
+        return false;
+    }
+
+    const auto targetCharged = mEntityManager.getComponent<Target>(entity);
+    // Target is being charged
+    if (mEntityManager.hasComponent<Charged>(targetCharged.entity))
+    {
+        damageFactor *= mEntityManager.getComponent<Charged>(targetCharged.entity).damageFactor;
+        mEntityManager.removeComponent<Charged>(targetCharged.entity);
+    }
+
+    const auto targetDoubleAttack = mEntityManager.getComponent<Target>(entity);
+    // Target is being charged
+    if (mEntityManager.hasComponent<DoubleAttacked>(targetDoubleAttack.entity))
+    {
+        damageFactor *= 2;
+        mEntityManager.removeComponent<DoubleAttacked>(targetDoubleAttack.entity);
+    }
+
+    return true;
 }

@@ -1,12 +1,6 @@
 #include "SkillSystem.h"
-#include "EntityManager.h"
-#include "SkillComponents.h"
-#include "TargetComponent.h"
 #include "StatusComponent.h"
-#include "WeaponComponent.h"
 #include "InfoComponent.h"
-
-#include <iostream>
 
 SkillSystem::SkillSystem(ecs::EntityManager<ComponentCount, SystemCount>& entityManager)
     : mEntityManager(entityManager)
@@ -33,7 +27,8 @@ void SkillSystem::update() const
     }
 }
 
-void SkillSystem::useStun(ecs::Entity entity) const
+// TODO: Skills could be refactored
+void SkillSystem::useStun(ecs::Entity const entity) const
 {
     auto& stun = mEntityManager.getComponent<SkillSet>(entity).skills.at(ComponentType::StunSkill);
 
@@ -61,7 +56,7 @@ void SkillSystem::useStun(ecs::Entity entity) const
 }
 
 
-void SkillSystem::useCharge(ecs::Entity entity) const
+void SkillSystem::useCharge(ecs::Entity const entity) const
 {
     auto& charge = mEntityManager.getComponent<SkillSet>(entity).skills.at(ComponentType::ChargeSkill);
 
@@ -85,4 +80,56 @@ void SkillSystem::useCharge(ecs::Entity entity) const
     const auto& target = mEntityManager.getComponent<Target>(entity);
     mEntityManager.addComponent<Charged>(target.entity, 2);
     std::cout << mEntityManager.getComponent<Info>(entity).name << " has charged!" << std::endl;
+}
+
+void SkillSystem::useDodge(ecs::Entity const entity) const
+{
+    auto& dodge = mEntityManager.getComponent<SkillSet>(entity).skills.at(ComponentType::DodgeSkill);
+
+    // Charge cannot be used
+    if (dodge.remainingTime > 0)
+    {
+        --dodge.remainingTime;
+        return;
+    }
+
+    dodge.remainingTime = dodge.rechargeTime;
+
+    if (auto const probability = uniform_dist(randomEngine); probability > dodge.successChance)
+    {
+        // did not succeed
+        std::cout << mEntityManager.getComponent<Info>(entity).name << " failed to dodge enemy's attack!" << std::endl;
+        return;
+    }
+
+    // Success!!!
+    const auto& target = mEntityManager.getComponent<Target>(entity);
+    mEntityManager.addComponent<Dodged>(target.entity);
+    std::cout << mEntityManager.getComponent<Info>(entity).name << " has dodged the attack!" << std::endl;
+}
+
+void SkillSystem::useDoubleAttack(ecs::Entity const entity) const
+{
+    auto& doubleAttack = mEntityManager.getComponent<SkillSet>(entity).skills.at(ComponentType::DoubleAttackSkill);
+
+    // Charge cannot be used
+    if (doubleAttack.remainingTime > 0)
+    {
+        --doubleAttack.remainingTime;
+        return;
+    }
+
+    doubleAttack.remainingTime = doubleAttack.rechargeTime;
+
+    if (auto const probability = uniform_dist(randomEngine); probability > doubleAttack.successChance)
+    {
+        // did not succeed
+        std::cout << mEntityManager.getComponent<Info>(entity).name << " failed to double attack!" << std::endl;
+        return;
+    }
+
+    // Success!!!
+    const auto& target = mEntityManager.getComponent<Target>(entity);
+    mEntityManager.addComponent<DoubleAttacked>(target.entity);
+    std::cout << mEntityManager.getComponent<Info>(entity).name << " attacks twice!" << std::endl;
 }

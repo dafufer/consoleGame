@@ -36,6 +36,9 @@
     <ClCompile Include="SkillSystem.cpp">
       <Filter>Source Files\systems</Filter>
     </ClCompile>
+    <ClCompile Include="ConsumableSystem.cpp">
+      <Filter>Source Files\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h">
@@ -65,9 +68,6 @@
     <ClInclude Include="DefensiveItems.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
-    <ClInclude Include="PotionItem.h">
-      <Filter>Header Files\components</Filter>
-    </ClInclude>
     <ClInclude Include="LifeComponent.h">
       <Filter>Header Files\components</Filter>
     </ClInclude>
@@ -94,6 +94,12 @@
     </ClInclude>
     <ClInclude Include="SkillSystem.h">
       <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsumableSystem.h">
+      <Filter>Header Files\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsumableComponents.h">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
