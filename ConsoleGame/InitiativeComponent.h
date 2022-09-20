@@ -4,7 +4,7 @@
 #include "Component.h"
 
 /**
- * \brief Represents the initiative of an entity. Higher initiative means higher possibility to start the combat
+ * \brief Represents the initiative of an entity. The entity with the highest initiative starts the combat
  */
 struct Initiative : public ecs::Component<Initiative, ComponentType::Initiative>
 {

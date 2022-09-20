@@ -54,7 +54,7 @@ void FightSystem::update() const
         if (mEntityManager.hasComponent<DefensiveItem>(target.entity))
         {
             auto& defense = mEntityManager.getComponent<DefensiveItem>(target.entity);
-            defense.defensePoints -= weapon.damage;
+            defense.defensePoints -= damage;
             damage = 0;
             if (defense.defensePoints < 0)
             {

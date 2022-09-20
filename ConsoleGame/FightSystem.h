@@ -4,6 +4,9 @@
 #include "SystemDefs.h"
 #include "Entity.h"
 
+/**
+ * \brief The fight systems deals with all the combat steps: consumables, skills, and attacks.
+ */
 class FightSystem : public ecs::System<ComponentCount, SystemCount>
 {
 public:

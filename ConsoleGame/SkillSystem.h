@@ -11,31 +11,30 @@
 #include <iostream>
 
 
+/**
+ * \brief The Skill system deals with the use of skills. If succeeded, a status if assigned to the corresponding entity.
+ */
 class SkillSystem final : public ecs::System<ComponentCount, SystemCount>
 {
 public:
     explicit SkillSystem(ecs::EntityManager<ComponentCount, SystemCount>& entityManager);
-    
+
 
     void update() const;
 
 private:
-    void useStun(ecs::Entity const entity) const;
-    void useCharge(ecs::Entity const entity) const;
-    void useDodge(ecs::Entity const entity) const;
-    void useDoubleAttack(ecs::Entity const entity) const;
-
+    // Helper method to use a skill
     template <typename Status, typename... Args>
     void useSkill(ecs::Entity const entity, ComponentType const type,
         std::string const & successMessage, std::string const & failureMessage, Args&& ... args) const;
 private:
     ecs::EntityManager<ComponentCount, SystemCount>& mEntityManager;
+    // Simple random number generation
     std::random_device r;
     mutable std::default_random_engine randomEngine;
     std::uniform_int_distribution<int> uniform_dist;
 };
 
-// TODO: Restrict template to types ?
 template <typename Status, typename... Args>
 void SkillSystem::useSkill(ecs::Entity const entity, ComponentType const type, std::string const& successMessage,
     std::string const& failureMessage, Args&&... args) const

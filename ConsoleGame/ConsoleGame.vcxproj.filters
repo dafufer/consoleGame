@@ -27,9 +27,6 @@
     <ClCompile Include="ConsoleGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FightSystem.cpp">
       <Filter>Source Files\systems</Filter>
     </ClCompile>

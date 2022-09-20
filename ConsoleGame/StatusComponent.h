@@ -9,7 +9,7 @@
  */
 struct Stunned final : public ecs::Component<Stunned, ComponentType::StunnedStatus>
 {
-    explicit Stunned(int _remainingTurns)
+    explicit Stunned(int const _remainingTurns)
     : remainingTurns(_remainingTurns)
     {
 
@@ -24,7 +24,7 @@ struct Stunned final : public ecs::Component<Stunned, ComponentType::StunnedStat
  */
 struct Charged final : public ecs::Component<Stunned, ComponentType::ChargedStatus>
 {
-    explicit Charged(int _damageFactor)
+    explicit Charged(int const _damageFactor)
         : damageFactor(_damageFactor)
     {
 
@@ -38,7 +38,7 @@ struct Charged final : public ecs::Component<Stunned, ComponentType::ChargedStat
  */
 struct Healed final : public ecs::Component<Stunned, ComponentType::HealedStatus>
 {
-    explicit Healed(int _lifePoints)
+    explicit Healed(int const _lifePoints)
         : lifePoints(_lifePoints)
     {
 
@@ -52,7 +52,7 @@ struct Healed final : public ecs::Component<Stunned, ComponentType::HealedStatus
  */
 struct Strong final : public ecs::Component<Stunned, ComponentType::StrongStatus>
 {
-    explicit Strong(int _damageFactor)
+    explicit Strong(int const _damageFactor)
         : damageFactor(_damageFactor)
     {
 
@@ -61,11 +61,17 @@ struct Strong final : public ecs::Component<Stunned, ComponentType::StrongStatus
     int damageFactor;
 };
 
+/**
+ * \brief Represents that an attack have been dodged
+ */
 struct Dodged : public ecs::Component<Stunned, ComponentType::DodgeStatus>
 {
     explicit Dodged() = default;
 };
 
+/**
+ * \brief An entity receives 2 attacks
+ */
 struct DoubleAttacked : public ecs::Component<Stunned, ComponentType::DoubleAttackStatus>
 {
     explicit DoubleAttacked() = default;

@@ -8,7 +8,7 @@
  */
 struct Life : public ecs::Component<Life, ComponentType::Life>
 {
-    Life(int _lifePoints)
+    Life(int const _lifePoints)
     : lifePoints(_lifePoints)
 
     {

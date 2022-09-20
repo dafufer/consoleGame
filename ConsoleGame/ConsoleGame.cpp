@@ -20,8 +20,11 @@
 
 #include "ConsumableSystem.h"
 
+// For handling console overwrites
 HANDLE h;
 CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+////////////////////////////////////////
+
 
 ecs::Entity createKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager)
 {
@@ -43,22 +46,17 @@ ecs::Entity createOrc(ecs::EntityManager<ComponentCount, SystemCount> & manager)
 }
 
 // Helper function used to print combatants info
-void printInfo(ecs::EntityManager<ComponentCount, SystemCount> const & manager,
-    const ecs::Entity knightEntity, const ecs::Entity orcEntity)
+void printInfo(ecs::EntityManager<ComponentCount, SystemCount> const & manager, const ecs::Entity entity)
 {
-    // TODO: Print equipment
-    std::cout << "Knight -> Life: " << manager.getComponent<Life>(knightEntity).lifePoints << " Defense:"
-        << (manager.hasComponent<DefensiveItem>(knightEntity) ? manager.getComponent<DefensiveItem>(knightEntity).defensePoints : 0);
-    for (auto const &[type, skill] : manager.getComponent<SkillSet>(knightEntity).skills)
+    std::cout << manager.getComponent<Info>(entity).name << " -> Life: " << manager.getComponent<Life>(entity).lifePoints
+        << " - Defense:" << (manager.hasComponent<DefensiveItem>(entity) ? manager.getComponent<DefensiveItem>(entity).defensePoints : 0);
+    for (auto const &[type, skill] : manager.getComponent<SkillSet>(entity).skills)
     {
-        std::cout << " " << skill.info.name << ": " << skill.remainingTime;
+        std::cout << " - " << skill.info.name << ": " << skill.remainingTime + 1 << " turns";
     }
-    std::cout << std::endl;
-
-    std::cout << "Orc -> Life: " << manager.getComponent<Life>(orcEntity).lifePoints;
-    for (auto const &[type, skill] : manager.getComponent<SkillSet>(orcEntity).skills)
+   for (auto const &[type, consumable] : manager.getComponent<ConsumableSet>(entity).consumables)
     {
-        std::cout << " " << skill.info.name << ": " << skill.remainingTime;
+        std::cout << " - " << consumable->info.name;
     }
     std::cout << std::endl;
 }
@@ -66,6 +64,7 @@ void printInfo(ecs::EntityManager<ComponentCount, SystemCount> const & manager,
 
 void equipKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager, const ecs::Entity knightEntity)
 {
+    // These variables will be added to the default skill values
     int initiative = 0;
     int skillTurns = 0;
     int successChance = 0;
@@ -76,11 +75,12 @@ void equipKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager, cons
     std::cout << "\t1. Sword: 5 damage" << std::endl;
     std::cout << "\t2. Great Sword: 12 damage [Cannot wear shields, -2 initiative]." << std::endl;
     std::cout << "\t3. Short Sword: 3 damage [+2 initiative, -1 skill turn, +10 success chance]" << std::endl;
-    char key = std::cin.get();
+    char key;
+    std::cin >> key;
     while (key != '1' && key != '2' && key != '3')
     {
         std::cout << "Please choose 1, 2 or 3." << std::endl;
-        key = std::cin.get();
+        std::cin >> key;
     }
 
     switch (key)
@@ -106,64 +106,55 @@ void equipKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager, cons
     if (attackChoice != '2')
     {
         // Shield. Only available if Great Sword was not chosen
-        if (attackChoice == '3')
+        std::cout << "Choose which shield should the Knight use:" << std::endl;
+        std::cout << "\t1. Small shield: 25 defense [+2 initiative]" << std::endl;
+        std::cout << "\t2. Medium shield: 50 defense." << std::endl;
+        std::cout << "\t3. Big shield: 75 defense [-5 initiative, +2 turns for skill, -10 success chance]." << std::endl;
+        std::cout << "\t4. Tower shield: 100 defense [-5 initiative, +2 turns for skill, cannot use skill]." << std::endl;
+
+        std::cin >> key;
+        while (key != '1' && key != '2' && key != '3' && key != '4')
         {
-            // Small shield for bastard swords
-            std::cout << "You are equipped with a small shield." << std::endl;
-            manager.addComponent<DefensiveItem>(knightEntity, Info{ "Small shield", "" }, 25);
+            std::cout << "Please choose 1, 2, 3, or 4." << std::endl;
+            std::cin >> key;
         }
-        else
+
+        defenseChoice = key;
+        switch (key)
         {
-            std::cout << "Choose which shield should the Knight use:" << std::endl;
-            std::cout << "\t1. Small shield: 25 defense [+2 initiative]" << std::endl;
-            std::cout << "\t2. Medium shield: 50 defense." << std::endl;
-            std::cout << "\t3. Big shield: 75 defense [-5 initiative, +2 turns for skill, -10 success chance]." << std::endl;
-            std::cout << "\t4. Tower shield: 100 defense [-5 initiative, +2 turns for skill, cannot charge]." << std::endl;
-
-            key = std::cin.get();
-            while (key != '1' && key != '2' && key != '3' && key != '4')
-            {
-                std::cout << "Please choose 1, 2, 3, or 4." << std::endl;
-                key = std::cin.get();
-            }
-
-            defenseChoice = key;
-            switch (key)
-            {
-            default:
-            case '1':
-                initiative += 2;
-                manager.addComponent<DefensiveItem>(knightEntity, Info{ "Small shield", "" }, 25);
-                break;
-            case '2':
-                manager.addComponent<DefensiveItem>(knightEntity, Info{ "Medium shield", "" }, 50);
-                break;
-            case '3':
-                initiative -= 5;
-                skillTurns = 2;
-                successChance -= 10;
-                manager.addComponent<DefensiveItem>(knightEntity, Info{ "Big shield", "" }, 75);
-                break;
-            case '4':
-                initiative -= 5;
-                skillTurns = 2;
-                manager.addComponent<DefensiveItem>(knightEntity, Info{ "Tower shield", "" }, 100);
-                break;
-            }
+        default:
+        case '1':
+            initiative += 2;
+            manager.addComponent<DefensiveItem>(knightEntity, Info{ "Small shield", "" }, 25);
+            break;
+        case '2':
+            manager.addComponent<DefensiveItem>(knightEntity, Info{ "Medium shield", "" }, 50);
+            break;
+        case '3':
+            initiative -= 5;
+            skillTurns = 2;
+            successChance -= 10;
+            manager.addComponent<DefensiveItem>(knightEntity, Info{ "Big shield", "" }, 75);
+            break;
+        case '4':
+            initiative -= 5;
+            skillTurns = 2;
+            manager.addComponent<DefensiveItem>(knightEntity, Info{ "Tower shield", "" }, 100);
+            break;
         }
     }
 
     // Skill
-    if (defenseChoice != 4)
+    if (defenseChoice != '4')
     {
         std::cout << "Choose the Knight skill:" << std::endl;
         std::cout << "\t1. Charge: Attack does double damage" << std::endl;
         std::cout << "\t2. Dodge: Avoid an attack." << std::endl;
-        key = std::cin.get();
+        std::cin >> key;
         while (key != '1' && key != '2')
         {
             std::cout << "Please choose 1, or 2" << std::endl;
-            key = std::cin.get();
+            std::cin >> key;
         }
 
         switch (key)
@@ -181,7 +172,7 @@ void equipKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager, cons
             manager.addComponent<SkillSet>(knightEntity, SkillSet(
                 {
                     {ComponentType::DodgeSkill, Skill(
-                        Info("Dodge", ""), 40 + successChance, 3 + skillTurns) }
+                        Info("Dodge", ""), 40 + successChance, 2 + skillTurns) }
                 }));
             break;
         }
@@ -191,11 +182,11 @@ void equipKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager, cons
     std::cout << "Choose the Knight potion:" << std::endl;
     std::cout << "\t1. Health Potion: Recovers 10 life points" << std::endl;
     std::cout << "\t2. Strength Potion: x2 damage of your attack." << std::endl;
-    key = std::cin.get();
+    std::cin >> key;
     while (key != '1' && key != '2')
     {
         std::cout << "Please choose 1, or 2" << std::endl;
-        key = std::cin.get();
+        std::cin >> key;
     }
 
     switch (key)
@@ -203,12 +194,12 @@ void equipKnight(ecs::EntityManager<ComponentCount, SystemCount> & manager, cons
     default:
     case '1':
         manager.addComponent<ConsumableSet>(knightEntity, ConsumableSet(
-            { {ComponentType::HealthPotion, HealthPotionItem(10) } }));
+            { {ComponentType::HealthPotion, std::make_shared<HealthPotionItem>(10) } }));
         break;
 
     case '2':
         manager.addComponent<ConsumableSet>(knightEntity, ConsumableSet(
-            { {ComponentType::StrengthPotion, StrengthPotionItem(2) } }));
+            { {ComponentType::StrengthPotion, std::make_shared<StrengthPotionItem>(2) } }));
         break;
     }
 
@@ -228,11 +219,12 @@ void equipOrc(ecs::EntityManager<ComponentCount, SystemCount> & manager, const e
     std::cout << "\t1. Axe: 8 damage" << std::endl;
     std::cout << "\t2. Great Axe: 16 damage [+2 turns to your skill, -15 success chance, -5 initiative]." << std::endl;
     std::cout << "\t3. Battle Axe: 11 damage [-5 success chance, -2 initiative]" << std::endl;
-    char key = std::cin.get();
+    char key;
+    std::cin >> key;
     while (key != '1' && key != '2' && key != '3')
     {
         std::cout << "Please choose 1, 2 or 3." << std::endl;
-        key = std::cin.get();
+        std::cin >> key;
     }
 
     switch (key)
@@ -258,11 +250,10 @@ void equipOrc(ecs::EntityManager<ComponentCount, SystemCount> & manager, const e
     std::cout << "Choose the Orc skill:" << std::endl;
     std::cout << "\t1. Stun: The enemy loses its turn" << std::endl;
     std::cout << "\t2. Double attack: Attacks twice in a turn." << std::endl;
-    key = std::cin.get();
+    std::cin >> key;
     while (key != '1' && key != '2')
     {
-        std::cout << "Please choose 1, or 2" << std::endl;
-        key = std::cin.get();
+        std::cin >> key;
     }
 
     switch (key)
@@ -289,11 +280,11 @@ void equipOrc(ecs::EntityManager<ComponentCount, SystemCount> & manager, const e
     std::cout << "Choose the Orc potion:" << std::endl;
     std::cout << "\t1. Health Potion: Recovers 10 life points" << std::endl;
     std::cout << "\t2. Strength Potion: x2 damage of your attack." << std::endl;
-    key = std::cin.get();
+    std::cin >> key;
     while (key != '1' && key != '2')
     {
         std::cout << "Please choose 1, or 2" << std::endl;
-        key = std::cin.get();
+        std::cin >> key;
     }
 
     switch (key)
@@ -301,12 +292,12 @@ void equipOrc(ecs::EntityManager<ComponentCount, SystemCount> & manager, const e
     default:
     case '1':
         manager.addComponent<ConsumableSet>(orcEntity, ConsumableSet(
-            { {ComponentType::HealthPotion, HealthPotionItem(10) } }));
+            { {ComponentType::HealthPotion, std::make_shared<HealthPotionItem>(10) } }));
         break;
 
     case '2':
         manager.addComponent<ConsumableSet>(orcEntity, ConsumableSet(
-            { {ComponentType::StrengthPotion, StrengthPotionItem(2) } }));
+            { {ComponentType::StrengthPotion, std::make_shared<StrengthPotionItem>(2) } }));
         break;
     }
 
@@ -331,7 +322,7 @@ void combatPhase(ecs::EntityManager<ComponentCount, SystemCount> const & manager
     {
         // reset the cursor position to where it was each time
         SetConsoleCursorPosition(h, bufferInfo.dwCursorPosition);
-        system("cls");
+        static_cast<void>(system("cls"));
 
         // Potions
         consumableSystem.update();
@@ -342,11 +333,13 @@ void combatPhase(ecs::EntityManager<ComponentCount, SystemCount> const & manager
         // Remove life points
         fightSystem.update();
 
-        printInfo(manager, knightEntity, orcEntity);
+        printInfo(manager, knightEntity);
+        printInfo(manager, orcEntity);
 
         if (manager.getComponent<Life>(knightEntity).lifePoints > 0 and
             manager.getComponent<Life>(orcEntity).lifePoints > 0)
         {
+            std::cin.ignore();
             std::cout << "Press enter for the next turn..." << std::endl;
             std::cin.ignore();
         }
@@ -376,6 +369,7 @@ int main()
     auto manager = ecs::EntityManager<ComponentCount, SystemCount>();
     manager.registerComponent<Info>();
     manager.registerComponent<Life>();
+    manager.registerComponent<Initiative>();
     manager.registerComponent<WeaponItem>();
     manager.registerComponent<DefensiveItem>();
     manager.registerComponent<SkillSet>();
@@ -417,7 +411,8 @@ int main()
 
         SetConsoleCursorPosition(h, bufferInfo.dwCursorPosition);
         static_cast<void>(system("cls"));
-        printInfo(manager, knightEntity, orcEntity);
+        printInfo(manager, knightEntity);
+        printInfo(manager, orcEntity);
         std::cout << "Press enter to start the battle..." << std::endl;
         std::cin.ignore();
 

@@ -10,7 +10,7 @@
  */
 struct DefensiveItem : public ecs::Component<DefensiveItem, ComponentType::Defense>
 {
-    DefensiveItem(Info _info, int _defensePoints)
+    DefensiveItem(Info _info, int const _defensePoints)
     : info(std::move(_info)),
     defensePoints(_defensePoints)
 

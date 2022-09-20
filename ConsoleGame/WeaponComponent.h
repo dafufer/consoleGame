@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Component.h"
+
+#include <utility>
 #include "ComponentTypes.h"
 #include  "InfoComponent.h"
 
@@ -12,8 +14,8 @@
  */
 struct WeaponItem : public ecs::Component<WeaponItem, ComponentType::Weapon>
 {
-    WeaponItem(Info _info, int _damage, bool _throwable, bool _usesAmmunition)
-    : info(_info)
+    WeaponItem(Info _info, int const _damage, bool const _throwable, bool const _usesAmmunition)
+    : info(std::move(_info))
     , damage(_damage)
     , throwable(_throwable)
     , usesAmmunition(_usesAmmunition)
@@ -32,8 +34,8 @@ struct WeaponItem : public ecs::Component<WeaponItem, ComponentType::Weapon>
  */
 struct Ammunition : public ecs::Component<WeaponItem, ComponentType::Ammunition>
 {
-    Ammunition(Info _info, int _damage, int _quantity)
-    : info(_info)
+    Ammunition(Info _info, int const _damage, int const _quantity)
+    : info(std::move(_info))
     , damage(_damage)
     , quantity(_quantity)
     {

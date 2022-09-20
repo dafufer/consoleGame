@@ -10,11 +10,11 @@
  */
 struct Skill
 {
-    Skill(Info _info, int _successChance, int _rechargeTime)
+    Skill(Info _info, int const _successChance, int const _rechargeTime)
         : info(std::move(_info))
         , successChance(_successChance)
-        , rechargeTime(_rechargeTime)
-        , remainingTime(_rechargeTime)
+        , rechargeTime(_rechargeTime <= 0 ? 1 : _rechargeTime)
+        , remainingTime(rechargeTime)
     {
 
     }

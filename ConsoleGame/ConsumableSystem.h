@@ -5,6 +5,7 @@
 
 /**
  * \brief This system deals with consumable items. When a consumable item is used, it disappears.
+ *  A status if assigned to the corresponding entity.
  */
 class ConsumableSystem final : public ecs::System<ComponentCount, SystemCount>
 {

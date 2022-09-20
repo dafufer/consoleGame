@@ -17,7 +17,27 @@ void ConsumableSystem::update() const
 {
     for (const auto& entity : getManagedEntities())
     {
-        // TODO: Ask what to use ?
+        if ((mEntityManager.getComponent<ConsumableSet>(entity).consumables.empty()))
+        {
+            // No potions available
+            continue;
+        }
+
+        std::cout << mEntityManager.getComponent<Info>(entity).name << ": Would you like to use the potion ? [y/n]" << std::endl;
+        char key;
+        std::cin >> key;
+        while(key != 'y' && key != 'n')
+        {
+            std::cout << "Please press 'y' or 'n'." << std::endl;
+            std::cin >> key;
+        }
+
+        if (key == 'n')
+        {
+            // Do not use the potion equipped
+            continue;
+        }
+
         if (mEntityManager.getComponent<ConsumableSet>(entity).consumables.count(ComponentType::HealthPotion))
         {
             useHealthPotion(entity);
@@ -32,25 +52,27 @@ void ConsumableSystem::update() const
 
 void ConsumableSystem::useHealthPotion(ecs::Entity entity) const
 {
-    auto& healthPotion = static_cast<HealthPotionItem&>(
-        mEntityManager.getComponent<ConsumableSet>(entity).consumables.at(ComponentType::HealthPotion));
+    auto const & consumable = mEntityManager.getComponent<ConsumableSet>(entity).consumables.at(ComponentType::HealthPotion);
 
-    // Success!!!
-    mEntityManager.addComponent<Healed>(entity, healthPotion.lifePoints);
+    if (auto const healthPotion = std::dynamic_pointer_cast<HealthPotionItem>(consumable))
+    {
+        mEntityManager.addComponent<Healed>(entity, healthPotion->lifePoints);
+    }
 
-    mEntityManager.removeComponent<HealthPotionItem>(entity);
+    mEntityManager.getComponent<ConsumableSet>(entity).consumables.erase(ComponentType::HealthPotion);
     std::cout << mEntityManager.getComponent<Info>(entity).name << " was healed!" << std::endl;
 }
 
 
 void ConsumableSystem::useStrengthPotion(ecs::Entity entity) const
 {
-    auto& strengthPotion = static_cast<StrengthPotionItem&>(
-        mEntityManager.getComponent<ConsumableSet>(entity).consumables.at(ComponentType::HealthPotion));
+    auto const & consumable = mEntityManager.getComponent<ConsumableSet>(entity).consumables.at(ComponentType::StrengthPotion);
 
-    // Success!!!
-    mEntityManager.addComponent<Strong>(entity, strengthPotion.damageFactor);
-    mEntityManager.removeComponent<StrengthPotionItem>(entity);
-
+    if (auto const strengthPotion = std::dynamic_pointer_cast<StrengthPotionItem>(consumable))
+    {
+        mEntityManager.addComponent<Strong>(entity, strengthPotion->damageFactor);
+    }
+    
+    mEntityManager.getComponent<ConsumableSet>(entity).consumables.erase(ComponentType::StrengthPotion);
     std::cout << mEntityManager.getComponent<Info>(entity).name << " was strengthened!" << std::endl;
 }
